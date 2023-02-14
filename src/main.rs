@@ -45,7 +45,7 @@ pub struct House {
     barrel: u8
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Skills {
     battling: u16,
     hunting: u16,
@@ -56,7 +56,7 @@ pub struct Skills {
     enchanting: u16,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Boosts {
     critChance: u16,
     critDamage: u16,
@@ -112,7 +112,13 @@ pub struct CatacombCharacter {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Character {
     player: Player,
-    currency: Currency
+    currency: Currency,
+    house: House,
+    skills: Skills,
+    boosts: Boosts,
+    partners: Vec<Partner>,
+    catacombBanner: CatacombBanner,
+    catacombCharacter: CatacombCharacter
 }
 
 #[tokio::main]
