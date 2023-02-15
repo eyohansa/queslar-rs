@@ -1,7 +1,9 @@
-use reqwest::Result;
+use reqwest;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
+use clipboard::{ClipboardContext, ClipboardProvider};
+use std::collections::HashMap;
 
 mod queslar;
 use queslar::Character;
@@ -14,14 +16,18 @@ pub struct Settings {
 }
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> reqwest::Result<()> {
     let settings = load_settings_from_file();
     let player_data = fetch_api(settings.api).await?;
     let player: Character = serde_json::from_str(&player_data).unwrap();
-    println!("{:?}", player);
-    let monster = catacomb::create_monster(100.0, 1.32, 1.30, 0.03);
+    let monster_params = read_from_clipboard().unwrap();
+    for (param, value) in &monster_params {
+        println!("{}: {}", param, value);
+    }
+    let mob_debuff = monster_params["Mob debuff"].parse::<f32>().unwrap();
+    let monster = catacomb::create_monster(100.0, 1.30, 1.30, mob_debuff);
     println!("{:#?}", monster);
-    Ok(())
+    Ok(())    
 }
 
 pub fn load_settings_from_file() -> Settings {
@@ -33,8 +39,21 @@ pub fn load_settings_from_file() -> Settings {
     return settings;
 }
 
-pub async fn fetch_api(api: String) -> Result<String> {
+pub async fn fetch_api(api: String) -> reqwest::Result<String> {
     let url = format!("https://queslar.com/api/player/full/{}", api);
     let res = reqwest::get(url).await?.text().await?;
     Ok(res)
+}
+
+pub fn read_from_clipboard() -> Result<HashMap<String, String>, Box<dyn std::error::Error>> {
+    let mut ctx: ClipboardContext = ClipboardProvider::new()?;
+    let contents = ctx.get_contents()?;
+
+    let mut monster_params = HashMap::new();
+
+    for line in contents.lines() {
+        let parts: Vec<&str> = line.split(":").collect();
+        monster_params.insert(parts[0].to_string(), parts[1].to_string());
+    }
+    Ok(monster_params)
 }

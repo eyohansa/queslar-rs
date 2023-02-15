@@ -30,3 +30,4 @@ pub fn create_monster(tier: f32, character_multiplier: f32, mob_multiplier: f32,
     monster.base_damage = base_damage.round();
     return monster;
 }
+
