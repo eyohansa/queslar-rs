@@ -20,12 +20,12 @@ async fn main() -> reqwest::Result<()> {
     let settings = load_settings_from_file();
     let player_data = fetch_api(settings.api).await?;
     let player: Character = serde_json::from_str(&player_data).unwrap();
-    let monster_params = read_from_clipboard().unwrap();
-    for (param, value) in &monster_params {
+    let cata_params = read_from_clipboard().unwrap();
+    for (param, value) in &cata_params {
         println!("{}: {}", param, value);
     }
-    let mob_debuff = monster_params["Mob debuff"].parse::<f32>().unwrap();
-    let monster = catacomb::create_monster(100.0, 1.30, 1.30, mob_debuff);
+    let mob_debuff = cata_params["Mob debuff"].parse::<f32>().unwrap();
+    let monster = catacomb::create_monster(100.0, cata_params, 1.30, 1.30, mob_debuff);
     println!("{:#?}", monster);
     Ok(())    
 }

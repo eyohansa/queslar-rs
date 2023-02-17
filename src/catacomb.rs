@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Default, Debug)]
 pub struct Monster {
     water_dist: f32,
@@ -21,7 +23,7 @@ pub struct Monster {
     max_health: u32,
 }
 
-pub fn create_monster(tier: f32, character_multiplier: f32, mob_multiplier: f32, mob_debuff: f32) -> Monster {
+pub fn create_monster(tier: f32, cata_params: HashMap<String, String>, character_multiplier: f32, mob_multiplier: f32, mob_debuff: f32) -> Monster {
     let mut monster = Monster::default();
     let health = 500.0 * (tier + tier.powf(1.7)) / (1.0 + mob_multiplier) / (1.0 + mob_debuff);
     monster.health = health.round();
