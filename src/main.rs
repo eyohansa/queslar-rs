@@ -21,11 +21,8 @@ async fn main() -> reqwest::Result<()> {
     let player_data = fetch_api(settings.api).await?;
     let player: Character = serde_json::from_str(&player_data).unwrap();
     let cata_params = read_from_clipboard().unwrap();
-    for (param, value) in &cata_params {
-        println!("{}: {}", param, value);
-    }
-    let mob_debuff = cata_params["Mob debuff"].parse::<f32>().unwrap();
-    let monster = catacomb::create_monster(100.0, cata_params, 1.30, 1.30, mob_debuff);
+    let mob_debuff = 2.4;
+    let monster = catacomb::create_monster(100.0, cata_params, 2.0, mob_debuff);
     println!("{:#?}", monster);
     Ok(())    
 }
@@ -53,7 +50,7 @@ pub fn read_from_clipboard() -> Result<HashMap<String, String>, Box<dyn std::err
 
     for line in contents.lines() {
         let parts: Vec<&str> = line.split(":").collect();
-        monster_params.insert(parts[0].to_string(), parts[1].to_string());
+        monster_params.insert(parts[0].to_string(), parts[1].trim().to_string());
     }
     Ok(monster_params)
 }
